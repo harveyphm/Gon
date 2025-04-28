@@ -1,23 +1,13 @@
-import qwiic_ultrasonic
-import time
+from gpiozero import DistanceSensor
+from gpiozero import Device
+from gpiozero.pins.lgpio import LGPIOFactory
+from time import sleep
 
-def main():
-    sensor = qwiic_ultrasonic.QwiicUltrasonic()
+# Force to use lgpio backend (for Raspberry Pi 5)
+Device.pin_factory = LGPIOFactory()
 
-    if sensor.is_connected() == False:
-        print("Sensor not connected. Check wiring.")
-        return
+sensor = DistanceSensor(echo=27, trigger=17)
 
-    print("Sensor connected!")
-
-    while True:
-        distance = sensor.get_distance()
-        if distance == None:
-            print("Failed to read distance")
-        else:
-            print(f"Distance: {distance} cm")
-
-        time.sleep(0.5)
-
-if __name__ == '__main__':
-    main()
+while True:
+    print('Distance: ', sensor.distance * 100, 'cm')
+    sleep(1)
